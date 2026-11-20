@@ -49,7 +49,7 @@ done
 
 # Skill: replace an existing copy only if it's ours (symlink into this repo, or identical content).
 if [ -e "$SKILL_LINK" ] && [ ! -L "$SKILL_LINK" ]; then
-  if cmp -s "$SKILL_LINK/SKILL.md" "$REPO/skill/SKILL.md" && [ "$(ls -A "$SKILL_LINK")" = "SKILL.md" ]; then
+  if cmp -s "$SKILL_LINK/SKILL.md" "$REPO/skills/sessions/SKILL.md" && [ "$(ls -A "$SKILL_LINK")" = "SKILL.md" ]; then
     rm -r "$SKILL_LINK"
   else
     backup="$SKILL_LINK.bak.$(date +%Y%m%d%H%M%S)"
@@ -57,7 +57,7 @@ if [ -e "$SKILL_LINK" ] && [ ! -L "$SKILL_LINK" ]; then
     say "existing skill moved to $backup"
   fi
 fi
-ln -sfn "$REPO/skill" "$SKILL_LINK"
+ln -sfn "$REPO/skills/sessions" "$SKILL_LINK"
 say "linked $SKILL_LINK  (/sessions in Claude Code)"
 
 case ":$PATH:" in

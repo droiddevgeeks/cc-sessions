@@ -14,6 +14,7 @@
       --only SID [--only SID]      restrict to session-id prefixes
       --force                      also delete scratch dirs whose clones have unpushed/dirty work
   cc-sessions kill PID [PID...]    SIGTERM Claude processes (refuses this session)
+  cc-sessions install-cli          plugin users: put ccs / cc-sessions on PATH
   cc-sessions log [-n N]           what was deleted, when, and where rescued work was saved
 
 Live sessions are never deleted. Stdlib only.
@@ -1333,6 +1334,68 @@ def choose(options: list[str], title: str = "") -> int | None:
     return None if idx is None else idx[0]
 
 
+# ---------- plugin installs: put `ccs` / `cc-sessions` on PATH ----------
+
+LAUNCHER_MARK = "cc-sessions launcher"
+LAUNCHER = f'''#!/usr/bin/env python3
+# {LAUNCHER_MARK} (written by `cc-sessions install-cli`).
+# Runs the newest cc_sessions.py from the Claude Code plugin cache, so plugin updates need no reinstall.
+import glob, os, re, sys
+cfg = os.environ.get("CLAUDE_CONFIG_DIR") or os.path.expanduser("~/.claude")
+paths = glob.glob(os.path.join(cfg, "plugins", "cache", "*", "cc-sessions", "*", "cc_sessions.py"))
+if not paths:
+    sys.exit("cc-sessions: plugin not found. In Claude Code run: /plugin install cc-sessions@cc-sessions")
+best = max(paths, key=lambda p: [int(x) for x in re.findall(r"\\d+", os.path.basename(os.path.dirname(p)))])
+os.execv(sys.executable, [sys.executable, best] + sys.argv[1:])
+'''
+
+
+def newest_copy(paths: list[Path]) -> Path | None:
+    """Highest version dir wins (numeric compare: 1.10.0 > 1.9.2); non-numeric names rank lowest."""
+    if not paths:
+        return None
+    return max(paths, key=lambda p: [int(x) for x in re.findall(r"\d+", p.parent.name)])
+
+
+def _is_ours(p: Path) -> bool:
+    if p.is_symlink():
+        return os.path.realpath(p).endswith("cc_sessions.py")
+    try:
+        return LAUNCHER_MARK in p.read_text(errors="ignore")[:300]
+    except OSError:
+        return False
+
+
+def install_cli(bin_dir: Path, claude_dir: Path = CLAUDE_DIR) -> list[Path]:
+    """Write `ccs` + `cc-sessions` launchers. Refuses to replace files it didn't create."""
+    targets = [bin_dir / "cc-sessions", bin_dir / "ccs"]
+    for t in targets:  # check all first: no half-installs
+        if (t.exists() or t.is_symlink()) and not _is_ours(t):
+            raise FileExistsError(f"{t} exists and isn't a cc-sessions launcher; move it away first")
+    bin_dir.mkdir(parents=True, exist_ok=True)
+    for t in targets:
+        if t.is_symlink():
+            t.unlink()
+        t.write_text(LAUNCHER)
+        t.chmod(0o755)
+    return targets
+
+
+def cmd_install_cli(args) -> int:
+    bin_dir = Path(args.bin_dir).expanduser()
+    try:
+        written = install_cli(bin_dir)
+    except FileExistsError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 1
+    for t in written:
+        print(f"  wrote {t}")
+    if str(bin_dir) not in os.environ.get("PATH", "").split(os.pathsep):
+        print(f"  NOTE: {bin_dir} is not on your PATH — add:  export PATH=\"{bin_dir}:$PATH\"")
+    print("  done — run: ccs")
+    return 0
+
+
 # ---------- menu ----------
 
 MENU = {
@@ -1463,13 +1526,17 @@ def main(argv=None) -> int:
     ls.add_argument("--all", action="store_true")
     sh = sub.add_parser("show")
     sh.add_argument("session", help="row # from `ls` or a session-id prefix")
+    ic = sub.add_parser("install-cli", help="put ccs/cc-sessions on PATH (for plugin installs)")
+    ic.add_argument("--bin-dir", default="~/.local/bin")
     lg = sub.add_parser("log")
     lg.add_argument("-n", type=int, default=30)
     pk = sub.add_parser("pick")
     pk.add_argument("--all", action="store_true")
     args = ap.parse_args(argv)
     try:
-        if args.cmd == "log":
+        if args.cmd == "install-cli":
+            return cmd_install_cli(args)
+        elif args.cmd == "log":
             return cmd_log(args)
         elif args.cmd == "ls":
             cmd_ls(args)

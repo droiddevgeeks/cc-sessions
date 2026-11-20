@@ -705,5 +705,45 @@ class ConfirmRisky(unittest.TestCase):
         self.assertFalse(cs.risky_confirmed("kc", []))
 
 
+class PluginLauncher(unittest.TestCase):
+    def test_newest_version_wins(self):
+        paths = [Path(f"/c/plugins/cache/m/cc-sessions/{v}/cc_sessions.py") for v in ("1.0.0", "1.10.0", "1.9.2", "dev")]
+        self.assertEqual(cs.newest_copy(paths), paths[1])
+
+    def test_no_copies(self):
+        self.assertIsNone(cs.newest_copy([]))
+
+    def test_install_cli_writes_working_launchers(self):
+        tmp = Path(tempfile.mkdtemp())
+        cfg, bin_dir = tmp / "cfg", tmp / "bin"
+        for v in ("1.0.0", "1.2.0"):
+            d = cfg / "plugins" / "cache" / "mkt" / "cc-sessions" / v
+            d.mkdir(parents=True)
+            (d / "cc_sessions.py").write_text(f"import sys; print('v{v}', *sys.argv[1:])\n")
+        written = cs.install_cli(bin_dir, cfg)
+        self.assertEqual(sorted(p.name for p in written), ["cc-sessions", "ccs"])
+        r = subprocess.run([str(bin_dir / "ccs"), "ls", "--all"], capture_output=True, text=True,
+                           env={**os.environ, "CLAUDE_CONFIG_DIR": str(cfg)})
+        self.assertEqual(r.stdout.strip(), "v1.2.0 ls --all")   # newest copy, args passed through
+        subprocess.run(["rm", "-rf", str(tmp)])
+
+    def test_install_cli_refuses_foreign_file(self):
+        tmp = Path(tempfile.mkdtemp())
+        (tmp / "ccs").write_text("someone else's script")
+        with self.assertRaises(FileExistsError):
+            cs.install_cli(tmp, tmp / "cfg")
+        self.assertEqual((tmp / "ccs").read_text(), "someone else's script")
+        subprocess.run(["rm", "-rf", str(tmp)])
+
+    def test_launcher_without_plugin_explains(self):
+        tmp = Path(tempfile.mkdtemp())
+        cs.install_cli(tmp / "bin", tmp / "cfg")
+        r = subprocess.run([str(tmp / "bin" / "ccs")], capture_output=True, text=True,
+                           env={**os.environ, "CLAUDE_CONFIG_DIR": str(tmp / "cfg")})
+        self.assertEqual(r.returncode, 1)
+        self.assertIn("/plugin install", r.stderr)
+        subprocess.run(["rm", "-rf", str(tmp)])
+
+
 if __name__ == "__main__":
     unittest.main()

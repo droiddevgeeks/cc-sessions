@@ -1,0 +1,13 @@
+{
+  "name": "cc-sessions",
+  "version": "1.0.0",
+  "description": "Clean up Claude Code without losing work you forgot you had. See running sessions and their RAM, transcripts and /tmp scratchpads (with cloned repos), and delete safely: live sessions are never touched, unpushed commits are shown and saved to a git bundle first, every deletion is logged.",
+  "author": {
+    "name": "droiddevgeeks"
+  },
+  "homepage": "https://github.com/droiddevgeeks/cc-sessions",
+  "repository": "https://github.com/droiddevgeeks/cc-sessions",
+  "license": "MIT",
+  "keywords": ["sessions", "cleanup", "disk", "memory", "scratchpad", "transcripts", "resume"],
+  "skills": "./skills/"
+}

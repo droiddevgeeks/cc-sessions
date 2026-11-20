@@ -1,0 +1,14 @@
+{
+  "name": "cc-sessions",
+  "description": "cc-sessions: see and safely clean up Claude Code sessions.",
+  "owner": {
+    "name": "droiddevgeeks"
+  },
+  "plugins": [
+    {
+      "name": "cc-sessions",
+      "source": "./",
+      "description": "Clean up Claude Code without losing work you forgot you had: sessions, RAM, transcripts and /tmp scratchpads, with unpushed work saved before anything is deleted."
+    }
+  ]
+}

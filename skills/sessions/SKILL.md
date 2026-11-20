@@ -7,7 +7,11 @@ description: Use when the user wants to see, find, resume or clean up Claude Cod
 
 Everything goes through the `cc-sessions` CLI (alias `ccs`). It already knows which sessions are live, which scratch clones hold unpushed or unreadable work, and which processes are background sessions vs leftovers. Hand-rolled `rm -rf`, `find -delete`, `pkill` or `kill -9` skip those checks, so they are not used here.
 
-First: `command -v cc-sessions`. If it is missing, tell the user and stop — don't improvise deletions.
+## Running it
+
+Use `cc-sessions` if `command -v cc-sessions` finds it. Otherwise run the copy bundled with this skill: `python3 "<base directory of this skill>/../../cc_sessions.py"` (the base directory is shown when the skill loads). Below, `cc-sessions` means whichever of the two works. If neither exists, tell the user and stop — don't improvise deletions.
+
+If the user wants `ccs` in their own terminal and it isn't installed: `python3 "<base>/../../cc_sessions.py" install-cli` writes `ccs` + `cc-sessions` to `~/.local/bin` (ask first; it adds files to their PATH).
 
 ## Your Bash is not a terminal
 

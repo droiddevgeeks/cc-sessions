@@ -21,12 +21,31 @@ Single Python file, standard library only. macOS and Linux.
 
 ## Install
 
+**As a Claude Code plugin** (recommended):
+
+```
+/plugin marketplace add droiddevgeeks/cc-sessions
+/plugin install cc-sessions@cc-sessions
+```
+
+That gives you the `/sessions` skill straight away. For the `ccs` terminal command too, ask Claude to "install the ccs command" or run once:
+
+```bash
+python3 ~/.claude/plugins/cache/cc-sessions/cc-sessions/*/cc_sessions.py install-cli
+```
+
+It writes small launchers to `~/.local/bin` that always run the newest installed plugin version, so `/plugin update` needs no reinstall.
+
+**From git** (if you want to hack on it):
+
 ```bash
 git clone https://github.com/droiddevgeeks/cc-sessions.git
 cd cc-sessions && bash install.sh
 ```
 
-This symlinks `cc-sessions` and `ccs` into `~/.local/bin` and the `/sessions` skill into `~/.claude/skills`, so `git pull` updates all of it. `bash install.sh --uninstall` removes the links (never your data). Needs Python 3.9+.
+This symlinks `cc-sessions` and `ccs` into `~/.local/bin` and the `/sessions` skill into `~/.claude/skills`, so `git pull` updates all of it. `bash install.sh --uninstall` removes the links (never your data). Use one method or the other, not both, or you'll have two `/sessions` skills.
+
+Needs Python 3.9+. Nothing to pip install.
 
 ## Use
 

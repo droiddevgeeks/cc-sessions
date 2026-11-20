@@ -1,6 +1,12 @@
 # cc-sessions
 
-See and clean up [Claude Code](https://claude.com/claude-code) sessions: running processes and their RAM, transcripts in `~/.claude/projects`, and the per-session scratchpads (often full of cloned repos) in `/tmp/claude-<uid>`.
+**Clean up Claude Code without losing work you forgot you had.**
+
+Heavy [Claude Code](https://claude.com/claude-code) use leaves a trail: ~400 MB of RAM per open session, transcripts piling up in `~/.claude`, and per-session scratchpads in `/tmp` full of cloned repos. On my machine that was 1.9 GB on disk, and one forgotten clone held 3 commits that existed nowhere else.
+
+`ccs` shows all of it in one place: what's running, what each session was about, what's taking space. Then it helps you clean up without the usual risk. It never touches live sessions, flags clones with unpushed work, shows you the actual commits before letting you delete them, and saves them to a git bundle first. Every deletion is logged, and at-risk work is saved so you can restore it.
+
+Type `ccs` and use the arrow keys, or just ask Claude to "clean up my sessions".
 
 Single Python file, standard library only. macOS and Linux.
 

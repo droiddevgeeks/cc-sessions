@@ -2,7 +2,7 @@
 
 **Clean up Claude Code without losing work you forgot you had.**
 
-![ccs: list sessions, inspect one, delete safely (unpushed commits saved first), deletion log](docs/demo.gif)
+![ccs: list sessions, inspect one, delete safely (unpushed commits saved first), deletion log](docs/demo-tour.gif)
 
 Heavy [Claude Code](https://claude.com/claude-code) use leaves a trail: ~400 MB of RAM per open session, transcripts piling up in `~/.claude`, and per-session scratchpads in `/tmp` full of cloned repos. On my machine that was 1.9 GB on disk, and one forgotten clone held 3 commits that existed nowhere else.
 

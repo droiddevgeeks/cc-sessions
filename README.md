@@ -2,9 +2,16 @@
 
 **Clean up Claude Code without losing work you forgot you had.**
 
+![ccs: pick sessions, see a clone's unpushed commits, confirm, work saved to a bundle](docs/demo.gif)
+
 Heavy [Claude Code](https://claude.com/claude-code) use leaves a trail: ~400 MB of RAM per open session, transcripts piling up in `~/.claude`, and per-session scratchpads in `/tmp` full of cloned repos. On my machine that was 1.9 GB on disk, and one forgotten clone held 3 commits that existed nowhere else.
 
-`ccs` shows all of it in one place: what's running, what each session was about, what's taking space. Then it helps you clean up without the usual risk. It never touches live sessions, flags clones with unpushed work, shows you the actual commits before letting you delete them, and saves them to a git bundle first. Every deletion is logged, and at-risk work is saved so you can restore it.
+- **See everything**: running sessions and their RAM, transcripts, and `/tmp` scratchpads with cloned repos
+- **Know what each session was**: titles, tokens, first prompt, and the exact `claude --resume` command
+- **Never touches live sessions**, even with `--force`
+- **Flags clones with unpushed, uncommitted or unreadable work**, and shows you the commits before you can delete them
+- **Saves before deleting**: git bundle, patch and untracked files, so you can restore them
+- **Logs every deletion**, so "what did I delete?" has an answer
 
 Type `ccs` and use the arrow keys, or just ask Claude to "clean up my sessions".
 
@@ -100,6 +107,7 @@ Ages: `3d`, `12h`, or a bare number of days.
 ```bash
 python3 -m unittest -v                                  # unit tests (git is exercised for real, not mocked)
 python3 tools/drive_tty.py steps.json -- ./cc_sessions.py   # drive the arrow-key UI through a real pty
+vhs tools/demo/demo.tape                                # re-record docs/demo.gif from fake data in /tmp/ccs-demo
 ```
 
 Env overrides: `CLAUDE_CONFIG_DIR` (default `~/.claude`), `CC_SESSIONS_SCRATCH` (scratch root), `NO_COLOR`.

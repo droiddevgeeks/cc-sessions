@@ -894,7 +894,7 @@ def delete_items(scratch: list[ScratchDir], transcripts: list[Transcript], *, lo
                 got = rescue_clone(c.path, rescue_dir, d.session_id[:8])
                 rescued += got
                 if got:
-                    print(S(f"  saved {c.path.name} work → {got[0].parent}", "green"))
+                    print(S(f"  saved {c.path.name} work → {str(got[0].parent).replace(str(HOME), '~')}", "green"))
             except RescueError as e:
                 if allow_unrescuable:
                     notes.append(f"{c.path.name}: unrescuable ({e})")

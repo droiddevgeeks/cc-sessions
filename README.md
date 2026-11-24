@@ -2,7 +2,7 @@
 
 **Clean up Claude Code without losing work you forgot you had.**
 
-![ccs: pick sessions, see a clone's unpushed commits, confirm, work saved to a bundle](docs/demo.gif)
+![ccs: list sessions, inspect one, delete safely (unpushed commits saved first), deletion log](docs/demo.gif)
 
 Heavy [Claude Code](https://claude.com/claude-code) use leaves a trail: ~400 MB of RAM per open session, transcripts piling up in `~/.claude`, and per-session scratchpads in `/tmp` full of cloned repos. On my machine that was 1.9 GB on disk, and one forgotten clone held 3 commits that existed nowhere else.
 
@@ -105,9 +105,7 @@ Ages: `3d`, `12h`, or a bare number of days.
 ## Develop
 
 ```bash
-python3 -m unittest -v                                  # unit tests (git is exercised for real, not mocked)
-python3 tools/drive_tty.py steps.json -- ./cc_sessions.py   # drive the arrow-key UI through a real pty
-vhs tools/demo/demo.tape                                # re-record docs/demo.gif from fake data in /tmp/ccs-demo
+python3 -m unittest -v    # unit tests (git is exercised for real, not mocked)
 ```
 
 Env overrides: `CLAUDE_CONFIG_DIR` (default `~/.claude`), `CC_SESSIONS_SCRATCH` (scratch root), `NO_COLOR`.

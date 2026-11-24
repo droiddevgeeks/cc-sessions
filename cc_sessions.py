@@ -959,7 +959,7 @@ def cmd_log(args) -> int:
               f"{pad(human(int(e.get('size') or 0)), 7, True)}  {S(e.get('session', '')[:8], 'gray')}  "
               f"{trunc(e.get('title') or '(no title)', 40)}{mark}{note}")
         for r in rescued:
-            print(S(f"  {'':40}↳ {r}", "gray"))
+            print(S(f"  {'':40}↳ {str(r).replace(str(HOME), '~')}", "gray"))
     if any(e.get("rescued") for e in entries):
         print(S("\n  restore a bundle:  git clone <file>.bundle restored   ·   patch:  git apply <file>.patch", "gray"))
     return 0
